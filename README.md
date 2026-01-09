@@ -10,11 +10,12 @@ This repository contains custom skills that extend Claude Code's capabilities. S
 
 ```
 skills/
-├── jira-start.md       # Jira workflow automation skill
-└── ...                 # Additional skills
+└── jira-start/
+    └── SKILL.md        # Jira workflow automation skill
 ```
 
-Each skill file contains:
+Each skill directory contains:
+- `SKILL.md` (required) with frontmatter and workflow instructions
 - Frontmatter with name and description
 - Complete workflow documentation
 - Prerequisites and error handling
