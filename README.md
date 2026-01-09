@@ -8,17 +8,37 @@ This repository contains custom skills that extend Claude Code's capabilities. S
 
 ## Structure
 
-Skills in this repository are organized as individual files or directories, each containing:
-- Skill implementation and logic
-- Documentation and usage examples
-- Any required dependencies or configuration
+```
+skills/
+├── jira-start.md       # Jira workflow automation skill
+└── ...                 # Additional skills
+```
+
+Each skill file contains:
+- Frontmatter with name and description
+- Complete workflow documentation
+- Prerequisites and error handling
+- Usage examples
+
+## Available Skills
+
+### jira-start
+Automates the workflow for starting work on a Jira ticket:
+- Fetches ticket details via Jira MCP server
+- Assigns ticket and transitions to "In Progress"
+- Creates git branch or worktree based on ticket type
+- Generates TICKET.md context file with ticket information
+
+**Triggers**: "start ticket", "work on ABC-123", "pick up ticket", "begin work on"
+
+**Prerequisites**: Jira MCP server connection, Git repository
 
 ## Usage
 
 To use these skills with Claude Code:
-1. Ensure skills are properly configured in your Claude Code environment
-2. Invoke skills during your session using the skill invocation syntax
-3. Follow any skill-specific setup instructions
+1. Place skill files in your Claude Code skills directory
+2. Invoke skills during conversations (e.g., "start ticket ABC-123")
+3. Follow any skill-specific prompts and prerequisites
 
 ## Contributing
 
