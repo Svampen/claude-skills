@@ -1,7 +1,7 @@
 ---
 name: session-start
 description: Automates starting a new development session. Reads work stream or topic plan, creates session log, pre-populates tasks, sets up TodoWrite checklist. Use when user says "start session", "begin session", or "set up session".
-allowed-tools: Read, Glob, Write, TodoWrite, AskUserQuestion
+allowed-tools: Read, Glob, Write, Bash, TodoWrite, AskUserQuestion
 user-invocable: true
 ---
 
@@ -31,6 +31,7 @@ Activate this skill when:
      - Session goals (from "## Session Goals" section)
      - Suggested tasks (from "## Suggested Tasks" section)
    - Inform user: "Detected worktree context for [topic]. Using pre-configured details..."
+   - **Delete the context file** after reading (it's only needed for the first session; subsequent sessions should use normal flow)
    - Skip to **Step 4** with pre-populated values
 3. If **NO** (no context file):
    - Continue to Step 2 (normal flow)
@@ -193,11 +194,12 @@ Ready to begin! First task: [first task]
 **Skill Actions**:
 1. Finds `.claude-worktree-context.md` in project root
 2. Extracts: Topic = "user-authentication", Goals, Tasks
-3. Shows pre-populated details
-4. User accepts
-5. Creates: `docs/sessions/user-authentication/2026-01-11-auth-middleware.md`
-6. Creates TodoWrite with tasks
-7. Confirms: "Session started for User Authentication"
+3. Deletes the context file (consumed - won't confuse future sessions)
+4. Shows pre-populated details
+5. User accepts
+6. Creates: `docs/sessions/user-authentication/2026-01-11-auth-middleware.md`
+7. Creates TodoWrite with tasks
+8. Confirms: "Session started for User Authentication"
 
 ### Example 2: Start Session with Work Stream
 
@@ -272,6 +274,6 @@ Before finalizing, verify:
 
 - Sessions use date-based filenames: `YYYY-MM-DD-title.md`
 - Multiple sessions per day possible (add suffix if needed)
-- Worktree context file enables seamless integration
+- Worktree context file (`.claude-worktree-context.md`) is consumed and deleted after first session - this prevents stale context from confusing subsequent sessions
 - TodoWrite tasks should match session log tasks
 - Keep goals focused - one session, one main objective
