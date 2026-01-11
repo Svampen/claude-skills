@@ -1,6 +1,8 @@
 ---
 name: jira-start
 description: Start working on a Jira ticket. Fetches ticket details via Jira MCP, assigns to current user, transitions to "In Progress", creates a git branch or worktree based on ticket type, and generates a TICKET.md context file. Use when user says "start ticket", "work on ABC-123", "pick up ticket", "begin work on", or similar phrases indicating they want to start a Jira ticket.
+allowed-tools: Read, Write, Bash, AskUserQuestion
+user-invocable: true
 ---
 
 # Jira Start Workflow
