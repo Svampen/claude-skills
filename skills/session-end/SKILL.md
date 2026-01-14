@@ -114,6 +114,124 @@ The skill reads these commands and executes them in order.
    ```
    Wait for user decision.
 
+### Step 2.5: Implementation Review (Optional)
+
+**This step only runs if the `implementation-reviewer` agent is available.**
+
+1. **Check for agent**: Look for `.claude/agents/implementation-reviewer.md`
+   - If **NOT found**: Skip to Step 3 (this is expected for projects without the agent)
+   - If **found**: Continue with review
+
+2. **Read strictness setting** from `.claude/project-config.md`:
+   - Look for `## Implementation Review` section
+   - Find `Strictness:` setting (strict/medium/loose)
+   - Default to `strict` if not configured
+
+3. **Gather context for review**:
+   - Current session file path
+   - Work stream file path (if exists)
+   - Session goals/tasks
+
+4. **Get git diff**:
+   ```bash
+   git diff HEAD
+   ```
+
+5. **Perform implementation review**:
+
+   Analyze the implementation against goals:
+
+   **A. Goal Alignment**: For each task/goal from session:
+   - Is it fully implemented in the diff?
+   - Is it partially done? What's missing?
+   - Is it not addressed?
+
+   **B. Code Quality Scan**: Search diff for red flags:
+   - `TODO`, `FIXME`, `HACK`, `XXX` comments
+   - "workaround", "quick fix", "temporary", "for now", "later"
+   - Hardcoded values without explanation
+   - Incomplete error handling
+
+   **C. Accomplishment Verification**: Compare "What Was Accomplished" to actual diff:
+   - Does diff support each claimed accomplishment?
+   - Are there undocumented significant changes?
+
+   **D. Deferred Work Detection**: Identify new deferrals:
+   - New TODO comments (vs existing)
+   - "Future work" mentions
+
+6. **Generate review report**:
+
+   ```markdown
+   ## Implementation Review
+
+   **Strictness**: [strict/medium/loose]
+
+   ### Goal Alignment
+   | Goal | Status | Evidence |
+   |------|--------|----------|
+   | [Task 1] | [Complete/Partial/Missing] | [location or explanation] |
+
+   ### Code Quality Concerns
+
+   **Critical** (must address):
+   | Location | Type | Issue |
+   |----------|------|-------|
+   | file:line | TODO | "comment text" |
+
+   **Warnings** (should explain):
+   | Location | Type | Issue |
+   |----------|------|-------|
+
+   ### Accomplishment Verification
+   | Claimed | Verified | Notes |
+   |---------|----------|-------|
+
+   ### Deferred Work Detected
+   - [List any new TODOs/deferrals]
+
+   ### Summary
+   - Goals addressed: X/Y
+   - Critical issues: N
+   - Warnings: N
+   - New TODOs: N
+
+   **Status**: [PASS / CONCERNS / NEEDS WORK]
+   ```
+
+7. **Request user acceptance**:
+
+   Based on strictness level:
+
+   **Strict** (default):
+   - Any critical issue = NEEDS WORK (must fix or explain)
+   - Present: "Critical issues found. Please address before proceeding, or explain why they're acceptable."
+
+   **Medium**:
+   - Critical issues = CONCERNS (warning, can acknowledge)
+   - Present: "Concerns found. Acknowledge and continue, or address them?"
+
+   **Loose**:
+   - All issues informational
+   - Present: "Review complete. Proceed?"
+
+   **User options**:
+   ```
+   Implementation Review Complete.
+
+   [Review summary above]
+
+   Options:
+   1. ACCEPT - Proceed with commit
+   2. ACCEPT WITH NOTES - Acknowledge concerns and proceed
+   3. NEEDS WORK - Stop and address issues first
+
+   What would you like to do?
+   ```
+
+   **If NEEDS WORK**: Stop session-end, user addresses issues
+   **If ACCEPT or ACCEPT WITH NOTES**: Continue to Step 3
+
 ### Step 3: Run Quality Checks (From Config)
 
 **Read quality check commands from `.claude/project-config.md`** and execute in order:
@@ -154,6 +272,7 @@ The skill reads these commands and executes them in order.
    - [x] Lint: Passed (3 warnings)
    - [x] Tests: Passed
    - [x] Custom: Passed
+   - [x] Implementation Review: Passed [or "Accepted with notes" or "Skipped"]
    - [ ] Manual testing: [User to confirm]
    ```
 
@@ -235,6 +354,7 @@ Create structured commit message:
 - Build: Passed
 - Lint: Passed (N warnings)
 - Tests: Passed
+- Implementation Review: [Passed/Accepted/Skipped]
 - Manual testing: Confirmed
 
 ## Files Changed
@@ -282,6 +402,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
    - Build: Passed
    - Lint: N warnings
    - Tests: Passed
+   - Implementation Review: [status]
    - Commit: [hash]
 
    Ready for next session!
@@ -339,6 +460,17 @@ Commands to run before completing a session:
 [YOUR_CUSTOM_COMMAND]
 ```
 
+## Implementation Review
+
+Settings for the implementation-reviewer agent (if available).
+
+### Strictness
+<!-- Options: strict, medium, loose -->
+<!-- strict = Critical issues must be addressed or explained -->
+<!-- medium = Warnings shown, can acknowledge and continue -->
+<!-- loose  = Informational only, no blocking -->
+strict
+
 ## Insight Tags
 
 Common tags for insight-capture skill:
@@ -368,35 +500,73 @@ Common tags for insight-capture skill:
 1. Reads `.claude/project-config.md` - finds Rust commands
 2. Finds session: `docs/sessions/user-auth/2026-01-11-auth-middleware.md`
 3. Checks tasks: All 5 tasks completed
-4. Runs quality checks from config:
+4. **Implementation Review** (agent found):
+   - Analyzes diff against goals
+   - No critical issues found
+   - Report: "PASS - All goals addressed"
+   - User: "ACCEPT"
+5. Runs quality checks from config:
    - `cargo fmt --all` - passed
    - `cargo build --workspace` - passed (12.5s)
    - `cargo clippy --workspace --all-targets` - passed (2 warnings)
    - `cargo test --workspace` - passed
-5. Updates session log build status
-6. Changes status to "Complete"
-7. Asks: "Have you tested manually?" -> User: "Yes"
-8. Updates work stream doc, dev log
-9. Creates commit
-10. Confirms: "Session complete! Commit abc123"
+6. Updates session log build status
+7. Changes status to "Complete"
+8. Asks: "Have you tested manually?" -> User: "Yes"
+9. Updates work stream doc, dev log
+10. Creates commit
+11. Confirms: "Session complete! Commit abc123"
 
-### Example 2: No Config Found
+### Example 2: Implementation Review Finds Issues
 
 **User**: "finish session"
 
 **Skill Actions**:
-1. Checks for `.claude/project-config.md` - NOT FOUND
-2. Prompts user:
+1. Reads config (strictness: strict)
+2. Finds session
+3. Checks tasks: All marked complete
+4. **Implementation Review**:
    ```
-   No project config found. Let's create one.
+   ### Code Quality Concerns
 
-   What's your format command? (e.g., cargo fmt, npm run format)
+   **Critical**:
+   | Location | Type | Issue |
+   |----------|------|-------|
+   | src/auth.rs:45 | TODO | "// TODO: add rate limiting" |
+   | src/handler.rs:89 | Workaround | "// hack: skip validation for now" |
+
+   **Status**: NEEDS WORK
    ```
-3. User provides commands
-4. Creates `.claude/project-config.md`
-5. Continues with session completion using new config
+5. Presents options to user:
+   ```
+   Critical issues found:
+   1. TODO: add rate limiting (src/auth.rs:45)
+   2. Hack comment: skip validation (src/handler.rs:89)
 
-### Example 3: Build Fails
+   Options:
+   1. ACCEPT - I understand and accept these as-is
+   2. ACCEPT WITH NOTES - Add explanation for why these are acceptable
+   3. NEEDS WORK - Stop and fix these issues
+
+   What would you like to do?
+   ```
+6. User: "NEEDS WORK"
+7. Skill stops: "Please address the issues and run /session-end again."
+
+### Example 3: No Implementation Reviewer Agent
+
+**User**: "finish session"
+
+**Skill Actions**:
+1. Reads config
+2. Finds session
+3. Checks tasks: All complete
+4. Checks for `.claude/agents/implementation-reviewer.md` - **NOT FOUND**
+5. Skips implementation review (normal behavior for projects without agent)
+6. Runs quality checks...
+7. Continues normally
+
+### Example 4: Build Fails
 
 **User**: "let's wrap up"
 
@@ -439,6 +609,11 @@ Common tags for insight-capture skill:
 - STOP unless user explicitly skips
 - Remind: "Manual testing is important for quality"
 
+**If implementation review not available:**
+- This is normal for projects without the agent
+- Silently skip, do not warn or error
+- Continue with quality checks
+
 ---
 
 ## Notes
@@ -448,3 +623,5 @@ Common tags for insight-capture skill:
 - Config is per-project, skills are generic
 - All quality checks are optional - config defines what's needed
 - Manual testing confirmation is always asked (project-agnostic)
+- Implementation review is **optional** - only runs if agent exists
+- Implementation review strictness is configurable (default: strict)
