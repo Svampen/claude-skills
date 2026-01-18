@@ -24,6 +24,17 @@ Activate this skill when:
 
 ## Instructions
 
+### Step 0: Read Project Config
+
+1. Read `.claude/project-config.md` if it exists
+2. Parse `## Documentation Paths` section to get:
+   - Development log path (default: `docs/development-log.md`)
+   - Work streams path (default: `docs/work-streams/`)
+
+**If no config exists:**
+- Use default paths listed above
+- Continue with skill execution
+
 ### Step 1: Verify We're in Main Repo
 
 1. Run `git worktree list` to see current worktrees
@@ -36,9 +47,9 @@ Activate this skill when:
 
 ### Step 2: Find Available Work Streams (Optional)
 
-1. Check if `docs/development-log.md` exists
+1. Check if development log exists at `[dev-log-path]` (from config)
 2. If yes, look for "Active Work" section and extract active topics
-3. Also glob `docs/work-streams/*.md` for all available work streams
+3. Also glob `[work-streams-path]/*.md` (from config) for all available work streams
 4. Build list of options (if any exist)
 
 ### Step 3: Ask User for Topic
@@ -65,7 +76,7 @@ Options:
 
 ### Step 5: Read Work Stream Document (if exists)
 
-1. Check if `docs/work-streams/[topic-name].md` exists
+1. Check if `[work-streams-path]/[topic-name].md` exists (from config)
 2. If yes:
    - Read the document
    - Extract: Purpose, Goals, Next session tasks, Key files mentioned
@@ -137,8 +148,8 @@ Write `.claude-worktree-context.md` in the new worktree root:
 
 ## Links
 
-- Work Stream: docs/work-streams/[topic-name].md (if exists)
-- Dev Log: docs/development-log.md (if exists)
+- Work Stream: [work-streams-path]/[topic-name].md (if exists)
+- Dev Log: [dev-log-path] (if exists)
 ```
 
 ### Step 8: Copy Claude Code Settings
@@ -242,7 +253,7 @@ When done with the work:
 1. Finds active work streams in dev log
 2. Lists options: "api-refactor", "database-migration", "Other"
 3. User selects "api-refactor"
-4. Reads `docs/work-streams/api-refactor.md` - extracts purpose/goals
+4. Reads `[work-streams-path]/api-refactor.md` - extracts purpose/goals
 5. Creates worktree with rich context from work stream
 6. Opens VS Code
 

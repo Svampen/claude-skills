@@ -58,10 +58,15 @@ The skill reads these commands and executes them in order.
 
 ## Instructions
 
-### Step 0: Check for Project Config
+### Step 0: Read Project Config
 
 1. Check if `.claude/project-config.md` exists
-2. If **YES**: Read and parse the "Quality Checks" section
+2. If **YES**:
+   - Parse `## Documentation Paths` section to get:
+     - Development log path (default: `docs/development-log.md`)
+     - Work streams path (default: `docs/work-streams/`)
+     - Sessions path (default: `docs/sessions/`)
+   - Parse `## Quality Checks` section for build commands
 3. If **NO**: Prompt user to create one:
    ```
    No project config found. Would you like to create one?
@@ -81,7 +86,7 @@ The skill reads these commands and executes them in order.
 **Identify the active session:**
 
 1. Check TodoWrite list for session context (if available)
-2. Glob all sessions: `docs/sessions/*/*.md`
+2. Glob all sessions: `[sessions-path]/*/*.md` (from config)
 3. Filter and sort to find most recent with "Status: In Progress"
 4. Read session file
 
@@ -187,7 +192,7 @@ Do NOT proceed until user confirms testing (or explicitly skips).
 
 ### Step 6: Update Work Stream Document (if exists)
 
-1. Check if work stream document exists: `docs/work-streams/[topic-name].md`
+1. Check if work stream document exists: `[work-streams-path]/[topic-name].md` (from config)
 2. If yes:
    - Add completed session to "Completed" section
    - Update status if applicable
@@ -195,7 +200,7 @@ Do NOT proceed until user confirms testing (or explicitly skips).
 
 ### Step 7: Update Development Log (if exists)
 
-1. Check if `docs/development-log.md` exists
+1. Check if development log exists at `[dev-log-path]` (from config)
 2. If yes:
    - Add entry for this session
    - Update "Active Work" section if applicable
@@ -246,7 +251,7 @@ Create structured commit message:
 - [list from session log]
 
 **Documentation**:
-- docs/sessions/[topic-name]/YYYY-MM-DD-[title].md
+- [sessions-path]/[topic-name]/YYYY-MM-DD-[title].md
 - [other docs updated]
 
 Co-Authored-By: Claude <noreply@anthropic.com>
@@ -259,14 +264,14 @@ Co-Authored-By: Claude <noreply@anthropic.com>
    - List all modified/new files mentioned in session log
    - Include: session log file
    - Include: work stream doc (if updated)
-   - Include: docs/development-log.md (if updated)
+   - Include: development log (if updated)
 
 3. If user approves:
    ```bash
    git add [files from session log]
-   git add docs/sessions/[path]/[session-file].md
-   [git add docs/work-streams/[topic-name].md  # if updated]
-   [git add docs/development-log.md  # if updated]
+   git add [sessions-path]/[topic-name]/[session-file].md
+   [git add [work-streams-path]/[topic-name].md  # if updated]
+   [git add [dev-log-path]  # if updated]
    git commit -m "$(cat <<'EOF'
    [commit message]
    EOF
@@ -349,11 +354,15 @@ Common tags for insight-capture skill:
 
 ## Documentation Paths
 
+<!-- Customize these paths for your project structure -->
+<!-- All paths are relative to project root -->
+
 - Development log: docs/development-log.md
 - Work streams: docs/work-streams/
 - Sessions: docs/sessions/
 - Decisions: docs/decisions/
 - Insights: docs/insights/
+- Discovery: docs/discovery/
 ```
 
 ---
@@ -366,7 +375,7 @@ Common tags for insight-capture skill:
 
 **Skill Actions**:
 1. Reads `.claude/project-config.md` - finds Rust commands
-2. Finds session: `docs/sessions/user-auth/2026-01-11-auth-middleware.md`
+2. Finds session: `[sessions-path]/user-auth/2026-01-11-auth-middleware.md`
 3. Checks tasks: All 5 tasks completed
 4. Runs quality checks from config:
    - `cargo fmt --all` - passed

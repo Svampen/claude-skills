@@ -17,31 +17,41 @@ Activate this skill when:
 - Before starting new work and dev log feels unwieldy
 - Proactively when you notice dev log exceeds ~1000 lines
 
+## Instructions
+
+### Step 0: Read Project Config
+
+1. Read `.claude/project-config.md` if it exists
+2. Parse `## Documentation Paths` section to get:
+   - Development log path (default: `docs/development-log.md`)
+
+**If no config exists:**
+- Use default path listed above
+- Continue with skill execution
+
 ## Rotation Strategy
 
-**System log-style numbered rotation**:
+**System log-style numbered rotation** (paths based on config):
 ```
-docs/development-log.md     # Current (most recent entries)
-docs/development-log.1.md   # Previous rotation
-docs/development-log.2.md   # Older rotation
-docs/development-log.3.md   # Oldest rotation
+[dev-log-path]       # Current (most recent entries)
+[dev-log-path].1     # Previous rotation (e.g., docs/development-log.1.md)
+[dev-log-path].2     # Older rotation
+[dev-log-path].3     # Oldest rotation
 ```
 
-**Threshold**: Rotate when `development-log.md` exceeds **1000 lines** (keeps file manageable)
+**Threshold**: Rotate when development log exceeds **1000 lines** (keeps file manageable)
 
 **Rotation process**:
-1. Rename `.2.md` -> `.3.md` (if `.2.md` exists)
-2. Rename `.1.md` -> `.2.md` (if `.1.md` exists)
-3. Rename `.md` -> `.1.md`
-4. Create new `.md` with header template
-
-## Instructions
+1. Rename `.2` -> `.3` (if `.2` exists)
+2. Rename `.1` -> `.2` (if `.1` exists)
+3. Rename main -> `.1`
+4. Create new main with header template
 
 ### Step 1: Check Current Size
 
 1. Count lines in development log:
    ```bash
-   wc -l docs/development-log.md
+   wc -l [dev-log-path]
    ```
 
 2. Parse line count from output
@@ -64,10 +74,10 @@ docs/development-log.3.md   # Oldest rotation
 
 ### Step 2: Check for Existing Archives
 
-Check which archive files exist:
+Check which archive files exist (based on `[dev-log-path]` from config):
 
 ```bash
-ls docs/development-log.*.md 2>/dev/null || echo "No archives"
+ls [dev-log-path].* 2>/dev/null || echo "No archives"
 ```
 
 Parse results to determine:
@@ -79,41 +89,41 @@ Parse results to determine:
 
 **IMPORTANT**: Rotate in reverse order to avoid overwriting!
 
-1. **If `.2.md` exists**, rename to `.3.md`:
+1. **If `.2` exists**, rename to `.3`:
    ```bash
-   mv docs/development-log.2.md docs/development-log.3.md
+   mv [dev-log-path].2 [dev-log-path].3
    ```
-   - Report: "Rotated: .2.md -> .3.md"
+   - Report: "Rotated: .2 -> .3"
 
-2. **If `.1.md` exists**, rename to `.2.md`:
+2. **If `.1` exists**, rename to `.2`:
    ```bash
-   mv docs/development-log.1.md docs/development-log.2.md
+   mv [dev-log-path].1 [dev-log-path].2
    ```
-   - Report: "Rotated: .1.md -> .2.md"
+   - Report: "Rotated: .1 -> .2"
 
-3. **Rename current log** to `.1.md`:
+3. **Rename current log** to `.1`:
    ```bash
-   mv docs/development-log.md docs/development-log.1.md
+   mv [dev-log-path] [dev-log-path].1
    ```
-   - Report: "Rotated: .md -> .1.md"
+   - Report: "Rotated: main -> .1"
 
 ### Step 4: Create New Development Log
 
-1. Read first 50 lines of archived log (`.1.md`) to extract header/template
+1. Read first 50 lines of archived log (`.1`) to extract header/template
 
 2. Extract:
    - Title line (usually `# Development Log`)
    - Description/purpose section
    - Structure template (Active Work, Chronological, etc.)
 
-3. Create new `docs/development-log.md` with template:
+3. Create new development log at `[dev-log-path]` with template:
    ```markdown
    # Development Log
 
    This is the current development log. Older entries are archived in numbered files:
-   - [development-log.1.md](development-log.1.md) - Previous rotation
-   - [development-log.2.md](development-log.2.md) - Older rotation (if exists)
-   - [development-log.3.md](development-log.3.md) - Oldest rotation (if exists)
+   - [basename].1.md - Previous rotation
+   - [basename].2.md - Older rotation (if exists)
+   - [basename].3.md - Oldest rotation (if exists)
 
    ---
 
@@ -156,14 +166,14 @@ Tip: Archived logs remain searchable and accessible for historical reference.
 
 1. Count lines in new log:
    ```bash
-   wc -l docs/development-log.md
+   wc -l [dev-log-path]
    ```
 
 2. Verify new log is small (should be ~50-100 lines - just template)
 
 3. Verify archived log exists:
    ```bash
-   ls -lh docs/development-log.1.md
+   ls -lh [dev-log-path].1
    ```
 
 4. Report verification:
@@ -182,18 +192,18 @@ Tip: Archived logs remain searchable and accessible for historical reference.
 **User**: "Check if we need to rotate the dev log"
 
 **Skill Actions**:
-1. Runs `wc -l docs/development-log.md` -> "2318 lines"
+1. Runs `wc -l [dev-log-path]` -> "2318 lines"
 2. Reports: "Log exceeds threshold (2318 lines). Rotation recommended."
 3. Checks archives: `.1.md` does not exist
 4. Rotates:
    - `.md` -> `.1.md`
 5. Reads archived log header (first 50 lines)
 6. Extracts "Active Work" section
-7. Creates new `development-log.md` with template + Active Work
+7. Creates new development log with template + Active Work
 8. Reports:
    ```
    Rotation complete!
-   - Archived: 2318 lines -> development-log.1.md
+   - Archived: 2318 lines -> [dev-log-path].1
    - New log: 87 lines (healthy)
    ```
 
@@ -202,7 +212,7 @@ Tip: Archived logs remain searchable and accessible for historical reference.
 **User**: "rotate dev log"
 
 **Skill Actions**:
-1. Runs `wc -l docs/development-log.md` -> "432 lines"
+1. Runs `wc -l [dev-log-path]` -> "432 lines"
 2. Reports:
    ```
    Development log is healthy (432 lines).
@@ -241,9 +251,9 @@ Tip: Archived logs remain searchable and accessible for historical reference.
 
 ## Error Handling
 
-**If development-log.md not found**:
-- Report: "Development log not found at docs/development-log.md"
-- Suggest: "Check working directory or file path"
+**If development log not found**:
+- Report: "Development log not found at [dev-log-path]"
+- Suggest: "Check working directory or config path"
 - STOP
 
 **If rotation fails (file operation error)**:
@@ -293,5 +303,5 @@ Before completing, verify:
 - New log loads quickly
 
 **Reverting rotation**:
-- To undo: `mv docs/development-log.1.md docs/development-log.md`
+- To undo: `mv [dev-log-path].1 [dev-log-path]`
 - Archives remain untouched (easy rollback)

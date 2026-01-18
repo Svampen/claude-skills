@@ -33,6 +33,16 @@ Insights (multiple) -> Opportunity (singular) -> Solutions (multiple) -> Assumpt
 
 ## Instructions
 
+### Step 0: Read Project Config
+
+1. Read `.claude/project-config.md` if it exists
+2. Parse `## Documentation Paths` section to get:
+   - Discovery path (default: `docs/discovery/`)
+
+**If no config exists:**
+- Use default path listed above
+- Continue with skill execution
+
 ### Step 1: Create Basic Discovery Document Structure
 
 1. Ask user for discovery topic:
@@ -49,7 +59,7 @@ Insights (multiple) -> Opportunity (singular) -> Solutions (multiple) -> Assumpt
    - Example: "authentication-approach-comparison.md"
    - Example: "database-schema-design.md"
 
-3. Ensure folder exists: `docs/discovery/`
+3. Ensure folder exists: `[discovery-path]` (from config)
 
 4. Create basic structure with EMPTY sections:
    ```markdown
@@ -101,7 +111,7 @@ Insights (multiple) -> Opportunity (singular) -> Solutions (multiple) -> Assumpt
 
 5. **STOP HERE**: Tell user:
    ```
-   Created discovery doc at docs/discovery/[filename].md
+   Created discovery doc at [discovery-path]/[filename].md
 
    Ready to start with Insight #1?
    ```
@@ -301,7 +311,7 @@ Insights (multiple) -> Opportunity (singular) -> Solutions (multiple) -> Assumpt
    - Create work stream for implementation
    - Or create ADR to document decision
 
-   Discovery doc: docs/discovery/[filename].md
+   Discovery doc: [discovery-path]/[filename].md
    ```
 
 ---

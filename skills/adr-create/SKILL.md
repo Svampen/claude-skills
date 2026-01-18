@@ -20,9 +20,19 @@ Activate this skill when:
 
 ## Instructions
 
+### Step 0: Read Project Config
+
+1. Read `.claude/project-config.md` if it exists
+2. Parse `## Documentation Paths` section to get:
+   - Decisions path (default: `docs/decisions/`)
+
+**If no config exists:**
+- Use default path listed above
+- Continue with skill execution
+
 ### Step 1: Determine Next ADR Number
 
-1. Use Glob to find all ADR files: `docs/decisions/*.md`
+1. Use Glob to find all ADR files: `[decisions-path]/*.md` (from config)
 2. If folder doesn't exist, create it and start with `001`
 3. Extract numbers from filenames (format: `NNN-description.md`)
 4. Find highest number
@@ -221,13 +231,13 @@ ADR Status?
 
 ### Step 7: Create ADR File
 
-1. Ensure `docs/decisions/` directory exists
-2. Write ADR to `docs/decisions/[NNN]-[title].md`
+1. Ensure `[decisions-path]` directory exists (from config)
+2. Write ADR to `[decisions-path]/[NNN]-[title].md`
 3. Confirm creation:
    ```
    ADR [NNN] created: [Title]
 
-   Location: docs/decisions/[NNN]-[title].md
+   Location: [decisions-path]/[NNN]-[title].md
 
    Summary:
    - Problem: [brief]
@@ -260,7 +270,7 @@ ADR created! Consider these next steps:
    - Problem: "How to handle user authentication"
    - Options: "JWT tokens, Session cookies, OAuth"
    - Chosen: "JWT tokens"
-4. Creates `docs/decisions/016-authentication-pattern.md`
+4. Creates ADR at `[decisions-path]/016-authentication-pattern.md`
 5. Populates all sections based on user input
 6. Sets status to "Accepted"
 7. Confirms: "ADR 016 created!"
@@ -295,7 +305,7 @@ ADR created! Consider these next steps:
 - Warn: "ADR [NNN] already exists. Use next number [NNN+1] instead?"
 
 **If decisions folder doesn't exist**:
-- Create it: `mkdir -p docs/decisions`
+- Create it: `mkdir -p [decisions-path]`
 - Continue with ADR creation
 
 **If user cancels mid-creation**:
