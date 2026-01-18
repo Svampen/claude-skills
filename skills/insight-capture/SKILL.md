@@ -31,6 +31,18 @@ Provides lightweight alternative to discovery docs for:
 
 ## Instructions
 
+### Step 0: Read Project Config
+
+1. Read `.claude/project-config.md` if it exists
+2. Parse `## Documentation Paths` section to get:
+   - Insights path (default: `docs/insights/`)
+3. Parse `## Insight Tags` section for project-specific tags
+
+**If no config exists:**
+- Use default path listed above
+- Use default tags
+- Continue with skill execution
+
 ### Step 1: Gather Insight Information
 
 Ask user to describe the insight using AskUserQuestion:
@@ -108,9 +120,9 @@ Example transformations:
 
 ### Step 5: Create Insight Document
 
-Ensure folder exists: `docs/insights/`
+Ensure folder exists: `[insights-path]` (from config)
 
-Write to `docs/insights/YYYY-MM-DD-title.md`:
+Write to `[insights-path]/YYYY-MM-DD-title.md`:
 
 ```markdown
 # [Insight Title]
@@ -154,7 +166,7 @@ Display summary:
 ```
 Insight captured!
 
-Location: docs/insights/YYYY-MM-DD-title.md
+Location: [insights-path]/YYYY-MM-DD-title.md
 
 Title: [Insight Title]
 Context: [Context]
@@ -214,7 +226,7 @@ Ready to create an ADR?
 3. Asks: "Why does it matter?"
    - User: "Users see outdated data, causes confusion and support tickets"
 4. Suggests tags: `architecture, performance, technical-debt`
-5. Creates: `docs/insights/2026-01-11-caching-stale-data.md`
+5. Creates insight at `[insights-path]/2026-01-11-caching-stale-data.md`
 6. Suggests: "This seems actionable. Create a task to investigate cache invalidation?"
 
 ### Example 2: Architecture Observation
@@ -229,7 +241,7 @@ Ready to create an ADR?
 3. Asks: "Why does it matter?"
    - User: "Frontend needs special handling for each endpoint, adds complexity"
 4. Suggests tags: `api, developer-experience, patterns`
-5. Creates: `docs/insights/2026-01-11-inconsistent-api-responses.md`
+5. Creates insight at `[insights-path]/2026-01-11-inconsistent-api-responses.md`
 6. Suggests: "This might warrant an ADR for API response standards. Create ADR?"
 
 ### Example 3: Pattern Recognition
@@ -244,7 +256,7 @@ Ready to create an ADR?
 3. Asks: "Why does it matter?"
    - User: "Debugging takes 3x longer without proper logging"
 4. Suggests tags: `developer-experience, patterns, technical-debt`
-5. Creates: `docs/insights/2026-01-11-missing-logging-pattern.md`
+5. Creates insight at `[insights-path]/2026-01-11-missing-logging-pattern.md`
 6. Suggests: "Consider creating a checklist or template that includes logging"
 
 ---
@@ -262,12 +274,12 @@ Ready to create an ADR?
 - Ask: "Would you prefer to create a full discovery doc?"
 
 **If similar insight already exists**:
-- Check `docs/insights/` for similar titles/topics
+- Check `[insights-path]` for similar titles/topics
 - Inform user: "Found similar insight: [filename]"
 - Ask: "Create new insight or update existing one?"
 
-**If docs/insights folder doesn't exist**:
-- Create it: `mkdir -p docs/insights`
+**If insights folder doesn't exist**:
+- Create it: `mkdir -p [insights-path]`
 - Continue with creation
 
 ---

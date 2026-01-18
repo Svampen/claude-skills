@@ -199,7 +199,7 @@ What would you like to do?
 ```
 ## Implementation Review
 
-**Session**: docs/sessions/auth-system/2026-01-18-login-flow.md
+**Session**: [sessions-path]/auth-system/2026-01-18-login-flow.md
 **Strictness**: strict
 
 ### Goal Alignment
@@ -237,7 +237,7 @@ What would you like to do?
 ```
 ## Implementation Review
 
-**Session**: docs/sessions/auth-system/2026-01-18-login-flow.md
+**Session**: [sessions-path]/auth-system/2026-01-18-login-flow.md
 **Strictness**: strict
 
 ### Goal Alignment

@@ -28,6 +28,18 @@ Work streams provide semantic topic-based organization for development work:
 
 ## Instructions
 
+### Step 0: Read Project Config
+
+1. Read `.claude/project-config.md` if it exists
+2. Parse `## Documentation Paths` section to get:
+   - Development log path (default: `docs/development-log.md`)
+   - Work streams path (default: `docs/work-streams/`)
+   - Sessions path (default: `docs/sessions/`)
+
+**If no config exists:**
+- Use default paths listed above
+- Continue with skill execution
+
 ### Step 1: Gather Work Stream Information
 
 Ask user to define the work stream using AskUserQuestion:
@@ -76,7 +88,7 @@ Create work stream filename from topic:
 - Convert to kebab-case
 - Remove special characters
 - Max 50 characters
-- File: `docs/work-streams/topic-name.md`
+- File: `[work-streams-path]/topic-name.md` (from config)
 
 Example transformations:
 - "User Authentication" -> `user-authentication.md`
@@ -84,13 +96,13 @@ Example transformations:
 - "Database Migration MVP" -> `database-migration-mvp.md`
 
 Also create session folder:
-- `docs/sessions/topic-name/` (matches work stream name)
+- `[sessions-path]/topic-name/` (from config, matches work stream name)
 
 ### Step 4: Check for Existing Work Stream
 
 Use Glob to check if work stream already exists:
 ```
-Glob: docs/work-streams/*.md
+Glob: [work-streams-path]/*.md
 ```
 
 If similar name found:
@@ -112,7 +124,7 @@ Ask user using AskUserQuestion:
 
 ### Step 6: Create Work Stream Document
 
-Write to `docs/work-streams/topic-name.md`:
+Write to `[work-streams-path]/topic-name.md` (from config):
 
 ```markdown
 # [Topic Name]
@@ -169,15 +181,15 @@ Write to `docs/work-streams/topic-name.md`:
 
 ### Step 7: Create Session Folder
 
-Create directory: `docs/sessions/topic-name/`
+Create directory: `[sessions-path]/topic-name/` (from config)
 
 ```bash
-mkdir -p docs/sessions/[topic-name]
+mkdir -p [sessions-path]/[topic-name]
 ```
 
 ### Step 8: Update Development Log (if exists)
 
-Check if `docs/development-log.md` exists. If yes, add work stream to "Active Work" section:
+Check if development log exists at `[dev-log-path]` (from config). If yes, add work stream to "Active Work" section:
 
 ```markdown
 ### [Topic Name]
@@ -196,8 +208,8 @@ Display summary:
 ```
 Work stream created!
 
-Location: docs/work-streams/topic-name.md
-Sessions folder: docs/sessions/topic-name/
+Location: [work-streams-path]/topic-name.md
+Sessions folder: [sessions-path]/topic-name/
 
 Topic: [Topic Name]
 Priority: [High|Medium|Low]
@@ -250,8 +262,8 @@ Questions to consider:
    - All endpoints return valid tokens
    - Middleware blocks unauthorized requests
    - 80%+ test coverage
-7. Creates: `docs/work-streams/user-authentication.md`
-8. Creates: `docs/sessions/user-authentication/`
+7. Creates work stream file at `[work-streams-path]/user-authentication.md`
+8. Creates session folder at `[sessions-path]/user-authentication/`
 9. Updates dev log (if exists)
 10. Suggests: "First goal is clear. Start session now?"
 
@@ -293,8 +305,8 @@ Questions to consider:
 - Warn: "Work stream should have at least 2-3 goals"
 - Prompt: "What specific outcomes do you want to achieve?"
 
-**If docs folder doesn't exist:**
-- Create it: `mkdir -p docs/work-streams docs/sessions`
+**If docs folders don't exist:**
+- Create them: `mkdir -p [work-streams-path] [sessions-path]`
 - Continue with creation
 
 **If user cancels mid-creation:**

@@ -30,6 +30,16 @@ Provides visibility into session history:
 
 ## Instructions
 
+### Step 0: Read Project Config
+
+1. Read `.claude/project-config.md` if it exists
+2. Parse `## Documentation Paths` section to get:
+   - Sessions path (default: `docs/sessions/`)
+
+**If no config exists:**
+- Use default path listed above
+- Continue with skill execution
+
 ### Step 1: Identify Topic
 
 Parse user request to extract topic:
@@ -48,12 +58,12 @@ Which topic would you like to see sessions for?
 Use Glob to find all session files:
 
 ```
-Glob: docs/sessions/[topic-name]/*.md
+Glob: [sessions-path]/[topic-name]/*.md
 ```
 
 **For fuzzy search** (user provided partial topic):
 ```
-Glob: docs/sessions/*[partial-topic]*/*.md
+Glob: [sessions-path]/*[partial-topic]*/*.md
 ```
 
 If no sessions found:
@@ -89,17 +99,17 @@ Sessions for '[Topic Name]':
 2026-01-08: Initial setup
   Goal: Set up project structure and dependencies
   Status: Complete
-  File: docs/sessions/topic-name/2026-01-08-initial-setup.md
+  File: [sessions-path]/topic-name/2026-01-08-initial-setup.md
 
 2026-01-09: Core implementation
   Goal: Implement core functionality
   Status: Complete
-  File: docs/sessions/topic-name/2026-01-09-core-implementation.md
+  File: [sessions-path]/topic-name/2026-01-09-core-implementation.md
 
 2026-01-11: Testing and fixes
   Goal: Add tests and fix issues
   Status: In Progress
-  File: docs/sessions/topic-name/2026-01-11-testing.md
+  File: [sessions-path]/topic-name/2026-01-11-testing.md
 
 Total: 3 sessions
 Completed: 2 sessions
@@ -172,7 +182,7 @@ Consider:
 
 **Skill Actions**:
 1. Identifies topic: `user-authentication`
-2. Globs: `docs/sessions/user-authentication/*.md`
+2. Globs: `[sessions-path]/user-authentication/*.md`
 3. Finds 3 sessions
 4. Reads metadata from each
 5. Formats output:
@@ -203,7 +213,7 @@ Consider:
 
 **Skill Actions**:
 1. User didn't specify topic - search all sessions
-2. Globs: `docs/sessions/*/*.md`
+2. Globs: `[sessions-path]/*/*.md`
 3. Reads all session files, filters for "Status: In Progress"
 4. Formats output:
    ```
@@ -212,12 +222,12 @@ Consider:
    user-authentication: Testing
      Date: 2026-01-11
      Goal: Add comprehensive tests
-     File: docs/sessions/user-authentication/2026-01-11-testing.md
+     File: [sessions-path]/user-authentication/2026-01-11-testing.md
 
    api-refactor: Endpoint cleanup
      Date: 2026-01-10
      Goal: Clean up deprecated endpoints
-     File: docs/sessions/api-refactor/2026-01-10-endpoint-cleanup.md
+     File: [sessions-path]/api-refactor/2026-01-10-endpoint-cleanup.md
 
    Total: 2 in-progress sessions
    ```
@@ -228,7 +238,7 @@ Consider:
 
 **Skill Actions**:
 1. Identifies partial topic: `auth`
-2. Globs: `docs/sessions/*auth*/*.md`
+2. Globs: `[sessions-path]/*auth*/*.md`
 3. Finds multiple matches:
    - `user-authentication/` (3 sessions)
    - `oauth-integration/` (2 sessions)
@@ -247,7 +257,7 @@ Consider:
 
 **Skill Actions**:
 1. Identifies topic: `database-migration`
-2. Globs: `docs/sessions/database-migration/*.md`
+2. Globs: `[sessions-path]/database-migration/*.md`
 3. No files found
 4. Informs user:
    ```

@@ -19,6 +19,18 @@ Activate this skill when:
 
 ## Instructions
 
+### Step 0: Read Project Config
+
+1. Read `.claude/project-config.md` if it exists
+2. Parse `## Documentation Paths` section to get:
+   - Development log path (default: `docs/development-log.md`)
+   - Work streams path (default: `docs/work-streams/`)
+   - Sessions path (default: `docs/sessions/`)
+
+**If no config exists:**
+- Use default paths listed above
+- Continue with skill execution
+
 ### Step 1: Check for Worktree Context File
 
 **Check if this is a worktree with pre-configured context:**
@@ -40,10 +52,10 @@ Activate this skill when:
 
 **Check for active work streams or topics:**
 
-1. Check if `docs/development-log.md` exists
+1. Check if development log exists at `[dev-log-path]` (from config)
    - If yes, look for "Active Work" section
    - Extract active topics/work streams
-2. Check for work stream files: `docs/work-streams/*.md`
+2. Check for work stream files: `[work-streams-path]/*.md` (from config)
 3. Build list of available options
 
 **If work streams found:**
@@ -56,7 +68,7 @@ Activate this skill when:
 
 ### Step 3: Read Work Stream Document (if exists)
 
-1. If work stream selected, check if `docs/work-streams/[topic-name].md` exists
+1. If work stream selected, check if `[work-streams-path]/[topic-name].md` exists (from config)
 2. If yes:
    - Read the document
    - Extract: Current status, Goals, Planned sessions, Latest completed session
@@ -108,8 +120,8 @@ Ask user for session information:
 
 ### Step 5: Create Session Log File
 
-1. Ensure session folder exists: `docs/sessions/[topic-name]/`
-2. Generate filename: `docs/sessions/[topic-name]/YYYY-MM-DD-[brief-title].md`
+1. Ensure session folder exists: `[sessions-path]/[topic-name]/` (from config)
+2. Generate filename: `[sessions-path]/[topic-name]/YYYY-MM-DD-[brief-title].md`
 3. Use current date for YYYY-MM-DD
 4. Create session log with this template:
 
@@ -178,7 +190,7 @@ Date: YYYY-MM-DD
 Goal: [Session goal]
 Tasks: [N] tasks in todo list
 
-Session log: docs/sessions/[topic-name]/YYYY-MM-DD-[title].md
+Session log: [sessions-path]/[topic-name]/YYYY-MM-DD-[title].md
 
 Ready to begin! First task: [first task]
 ```
@@ -197,7 +209,7 @@ Ready to begin! First task: [first task]
 3. Deletes the context file (consumed - won't confuse future sessions)
 4. Shows pre-populated details
 5. User accepts
-6. Creates: `docs/sessions/user-authentication/2026-01-11-auth-middleware.md`
+6. Creates session file at `[sessions-path]/user-authentication/2026-01-11-auth-middleware.md`
 7. Creates TodoWrite with tasks
 8. Confirms: "Session started for User Authentication"
 
@@ -209,7 +221,7 @@ Ready to begin! First task: [first task]
 1. No worktree context found
 2. Checks dev log - finds active work stream: "api-refactor"
 3. Asks: "Work on api-refactor?" - User confirms
-4. Reads `docs/work-streams/api-refactor.md`
+4. Reads `[work-streams-path]/api-refactor.md`
 5. Asks for session goal, tasks, title
 6. Creates session log and TodoWrite
 7. Confirms: "Session started!"
@@ -222,7 +234,7 @@ Ready to begin! First task: [first task]
 1. No worktree context, no work streams found
 2. Asks: "What topic/feature will you work on?"
 3. User: "bugfix-login-redirect"
-4. Creates: `docs/sessions/bugfix-login-redirect/`
+4. Creates session folder at `[sessions-path]/bugfix-login-redirect/`
 5. Asks for goal, tasks, title
 6. Creates session log and TodoWrite
 7. Confirms: "Session started for bugfix-login-redirect"
@@ -236,7 +248,7 @@ Ready to begin! First task: [first task]
 - Can't create session without at least a topic name
 
 **If session folder doesn't exist:**
-- Create it automatically: `mkdir -p docs/sessions/[topic-name]/`
+- Create it automatically: `mkdir -p [sessions-path]/[topic-name]/`
 
 **If previous session incomplete:**
 - Check latest session in folder for "Status: In Progress"
