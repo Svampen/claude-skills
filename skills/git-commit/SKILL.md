@@ -46,10 +46,14 @@ Activate this skill when:
 
 ### Scope (Optional)
 
-Scope indicates the area of the codebase affected:
+Scope indicates the module or directory affected. Use the most specific relevant name:
 - `feat(auth): add OAuth support`
-- `fix(api): correct response format`
-- `refactor(utils): simplify date handling`
+- `fix(session-start): correct template path`
+- `refactor(skills): extract shared config parsing`
+
+For changes spanning multiple modules, use the parent directory or omit scope:
+- `refactor(skills): standardize config loading` (multiple skills changed)
+- `chore: update dependencies` (project-wide)
 
 ### Breaking Changes
 
@@ -133,16 +137,24 @@ Options:
 
 ### Step 5: Generate Description
 
-Create a concise description (imperative mood, no period):
-- **Good**: "add user authentication middleware"
-- **Bad**: "Added authentication." / "adds auth"
+Create a concise description (imperative mood, no period).
+
+**Always use imperative mood — write it as a command: "add", "fix", "extract", not "added", "fixes", "extracting".**
+
+**Describe WHAT changed and WHY — never HOW. The code shows how.**
+
+- **Good**: "delegate commit responsibility to git-commit skill" (what + why, imperative)
+- **Good**: "add optional implementation review step" (what, imperative)
+- **Bad**: "move Steps 8-9 into a separate function and call it" (how)
+- **Bad**: "Added authentication." (past tense, period)
+- **Bad**: "adds auth" (present tense, too vague)
+- **Bad**: "extracting validation logic" (gerund, not imperative)
 
 Rules:
 - Start with lowercase (unless proper noun)
-- Use imperative mood ("add" not "added" or "adds")
 - No period at end
-- Max 50 characters for first line
-- Focus on "what" and "why", not "how"
+- The full first line (`type(scope): description`) MUST be ≤ 80 characters
+- If over 80, shorten the description — move detail to the body
 
 ### Step 6: Determine if Body Needed
 
@@ -157,11 +169,15 @@ Rules:
 - Single-purpose commit
 
 If body needed, write 1-3 sentences explaining:
-- Why this change was made
-- What problem it solves
+- **Why** this change was made
+- **What** problem it solves
 - Any important context
 
-### Step 7: Construct and Execute Commit
+Do NOT describe HOW the code works — that belongs in the code itself.
+
+### Step 7: Validate and Execute Commit
+
+**Before committing, verify the first line is ≤ 80 characters.** If over 80, shorten the description and move detail to the body.
 
 Build the commit message:
 
