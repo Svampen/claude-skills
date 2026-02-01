@@ -1,13 +1,13 @@
 ---
 name: session-end
-description: Automates completing a development session. Verifies task completion, runs project-configured quality checks, updates session log, creates structured commit. Use when user says "finish session", "complete session", or "session is done".
+description: Automates completing a development session. Verifies task completion, runs project-configured quality checks, updates session log. Use when user says "finish session", "complete session", or "session is done".
 allowed-tools: Read, Glob, Edit, Write, Bash, TodoWrite, AskUserQuestion
 user-invocable: true
 ---
 
 # Session End Skill
 
-Automates the completion of a development session. Verifies tasks, runs quality checks, updates documentation, and creates commits.
+Automates the completion of a development session. Verifies tasks, runs quality checks, and updates documentation.
 
 ## When to Use
 
@@ -15,7 +15,7 @@ Activate this skill when:
 - User says "finish session", "complete session", or "end session"
 - User says "session is done" or "ready to wrap up"
 - User asks "what's left to finish the session?"
-- User wants to commit session work
+- User wants to wrap up session work
 
 ## Project Configuration
 
@@ -219,80 +219,20 @@ Suggested entry format:
 - [Key accomplishment 3]
 ```
 
-### Step 8: Generate Commit Message
+### Step 8: Prompt to Commit
 
-Create structured commit message:
+Inform the user that the session is complete and ready to commit:
 
 ```
-[Topic Name] Session: [Brief Title]
+Session complete!
 
-[Brief summary paragraph of what was accomplished]
-
-## Accomplishments
-
-- [Key accomplishment 1]
-- [Key accomplishment 2]
-- [Key accomplishment 3]
-
-## Build Status
-
-- Format: Passed
-- Build: Passed
-- Lint: Passed (N warnings)
-- Tests: Passed
-- Manual testing: Confirmed
-
-## Files Changed
-
-**New**:
-- [list from session log]
-
-**Modified**:
-- [list from session log]
-
-**Documentation**:
-- [sessions-path]/[topic-name]/YYYY-MM-DD-[title].md
-- [other docs updated]
-
-Co-Authored-By: Claude <noreply@anthropic.com>
+Quality checks passed. Documentation updated.
+Use /git-commit when you're ready to commit your changes.
 ```
 
-### Step 9: Stage Files and Commit
+Do NOT stage or commit files — the `/git-commit` skill handles that.
 
-1. Show user the commit message
-2. Ask: "Ready to commit? Files that will be staged:"
-   - List all modified/new files mentioned in session log
-   - Include: session log file
-   - Include: work stream doc (if updated)
-   - Include: development log (if updated)
-
-3. If user approves:
-   ```bash
-   git add [files from session log]
-   git add [sessions-path]/[topic-name]/[session-file].md
-   [git add [work-streams-path]/[topic-name].md  # if updated]
-   [git add [dev-log-path]  # if updated]
-   git commit -m "$(cat <<'EOF'
-   [commit message]
-   EOF
-   )"
-   ```
-
-4. Confirm commit success:
-   ```
-   Session complete and committed!
-
-   Summary:
-   - Format: Passed
-   - Build: Passed
-   - Lint: N warnings
-   - Tests: Passed
-   - Commit: [hash]
-
-   Ready for next session!
-   ```
-
-### Step 10: Clean Up TodoWrite
+### Step 9: Clean Up TodoWrite
 
 1. Mark all todos as "completed"
 2. Or clear the todo list entirely
@@ -386,8 +326,7 @@ Common tags for insight-capture skill:
 6. Changes status to "Complete"
 7. Asks: "Have you tested manually?" -> User: "Yes"
 8. Updates work stream doc, dev log
-9. Creates commit
-10. Confirms: "Session complete! Commit abc123"
+9. Prompts: "Session complete! Use `/git-commit` to commit."
 
 ### Example 2: Build Fails
 
