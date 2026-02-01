@@ -145,7 +145,7 @@ Create a concise description (imperative mood, no period).
 
 - **Good**: "delegate commit responsibility to git-commit skill" (what + why, imperative)
 - **Good**: "add optional implementation review step" (what, imperative)
-- **Bad**: "move Steps 8-9 into a separate function and call it" (how)
+- **Bad**: "refactor the validation logic into a new helper function" (how)
 - **Bad**: "Added authentication." (past tense, period)
 - **Bad**: "adds auth" (present tense, too vague)
 - **Bad**: "extracting validation logic" (gerund, not imperative)
@@ -153,7 +153,7 @@ Create a concise description (imperative mood, no period).
 Rules:
 - Start with lowercase (unless proper noun)
 - No period at end
-- The full first line (`type(scope): description`) MUST be ≤ 80 characters
+- The full first line (`type: description` or `type(scope): description`) MUST be ≤ 80 characters
 - If over 80, shorten the description — move detail to the body
 
 ### Step 6: Determine if Body Needed
