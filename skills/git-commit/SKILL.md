@@ -173,6 +173,8 @@ If body needed, write 1-3 sentences explaining:
 - **What** problem it solves
 - Any important context
 
+**Use imperative mood in the body too** — consistent with the description.
+
 Do NOT describe HOW the code works — that belongs in the code itself.
 
 ### Step 7: Validate and Execute Commit
@@ -224,7 +226,7 @@ Deletions: [-N]
 ```
 feat(auth): add authentication middleware
 
-Implements JWT-based authentication for API endpoints.
+Implement JWT-based authentication for API endpoints.
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
@@ -256,7 +258,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 refactor(utils): extract validation to separate module
 
-Improves code organization by separating validation logic.
+Improve code organization by separating validation logic.
 No functional changes.
 
 Co-Authored-By: Claude <noreply@anthropic.com>
