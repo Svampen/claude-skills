@@ -38,38 +38,44 @@ git submodule add https://github.com/Svampen/claude-skills.git .claude/shared-sk
 
 ## Available Skills
 
+### Setup
+
+| Skill            | Description                                    | Trigger                         |
+| ---------------- | ---------------------------------------------- | ------------------------------- |
+| **init-project** | Generates tailored `.claude/project-config.md` | "init project", "/init-project" |
+
 ### Git & Version Control
 
-| Skill | Description | Trigger |
-|-------|-------------|---------|
-| **git-commit** | Creates commits using Conventional Commits format | "commit", "/commit" |
-| **worktree-start** | Creates git worktree for focused implementation work | "create worktree", "/worktree-start" |
-| **worktree-end** | Completes worktree with merge and cleanup | "end worktree", "/worktree-end" |
-| **worktree-list** | Shows all active worktrees and their status | "list worktrees", "/worktree-list" |
-| **worktree-remove** | Removes worktree (for abandoned work) | "remove worktree", "/worktree-remove" |
+| Skill               | Description                                          | Trigger                               |
+| ------------------- | ---------------------------------------------------- | ------------------------------------- |
+| **git-commit**      | Creates commits using Conventional Commits format    | "commit", "/commit"                   |
+| **worktree-start**  | Creates git worktree for focused implementation work | "create worktree", "/worktree-start"  |
+| **worktree-end**    | Completes worktree with merge and cleanup            | "end worktree", "/worktree-end"       |
+| **worktree-list**   | Shows all active worktrees and their status          | "list worktrees", "/worktree-list"    |
+| **worktree-remove** | Removes worktree (for abandoned work)                | "remove worktree", "/worktree-remove" |
 
 ### Session Management
 
-| Skill | Description | Trigger |
-|-------|-------------|---------|
-| **session-start** | Starts a new development session with tracking | "start session", "/session-start" |
-| **session-end** | Completes session with quality checks and commit | "finish session", "/session-end" |
-| **session-list** | Lists all sessions for a topic | "list sessions", "/session-list" |
-| **work-stream-start** | Creates work stream for multi-session effort | "start work stream", "/work-stream-start" |
+| Skill                 | Description                                      | Trigger                                   |
+| --------------------- | ------------------------------------------------ | ----------------------------------------- |
+| **session-start**     | Starts a new development session with tracking   | "start session", "/session-start"         |
+| **session-end**       | Completes session with quality checks and commit | "finish session", "/session-end"          |
+| **session-list**      | Lists all sessions for a topic                   | "list sessions", "/session-list"          |
+| **work-stream-start** | Creates work stream for multi-session effort     | "start work stream", "/work-stream-start" |
 
 ### Architecture & Discovery
 
-| Skill | Description | Trigger |
-|-------|-------------|---------|
-| **adr-create** | Creates Architecture Decision Records | "create ADR", "/adr-create" |
-| **discovery-start** | Starts structured discovery session | "discovery", "let's explore", "/discovery-start" |
-| **insight-capture** | Quick lightweight insight logging | "capture insight", "/insight-capture" |
-| **gather-insight** | Iterative research to generate insights | "I want to explore...", "/gather-insight" |
+| Skill               | Description                             | Trigger                                          |
+| ------------------- | --------------------------------------- | ------------------------------------------------ |
+| **adr-create**      | Creates Architecture Decision Records   | "create ADR", "/adr-create"                      |
+| **discovery-start** | Starts structured discovery session     | "discovery", "let's explore", "/discovery-start" |
+| **insight-capture** | Quick lightweight insight logging       | "capture insight", "/insight-capture"            |
+| **gather-insight**  | Iterative research to generate insights | "I want to explore...", "/gather-insight"        |
 
 ### Documentation
 
-| Skill | Description | Trigger |
-|-------|-------------|---------|
+| Skill              | Description                            | Trigger                             |
+| ------------------ | -------------------------------------- | ----------------------------------- |
 | **dev-log-rotate** | Rotates development log when too large | "rotate dev log", "/dev-log-rotate" |
 
 ## Skill Details
@@ -79,6 +85,7 @@ git submodule add https://github.com/Svampen/claude-skills.git .claude/shared-sk
 Creates commits following [Conventional Commits](https://www.conventionalcommits.org/) specification.
 
 **Features:**
+
 - Auto-detects commit type (feat, fix, docs, etc.)
 - Suggests scope based on changed files
 - Generates concise descriptions
@@ -93,11 +100,13 @@ Creates commits following [Conventional Commits](https://www.conventionalcommits
 Manages git worktrees for parallel development work.
 
 **Workflow:**
+
 1. `/worktree-start` - Create new worktree with context file
 2. Work in the worktree with VS Code
 3. `/worktree-end` - Merge branch and clean up
 
 **Features:**
+
 - Creates `.claude-worktree-context.md` for seamless session integration
 - Copies Claude Code settings to new worktrees
 - Handles uncommitted changes gracefully
@@ -110,6 +119,7 @@ Manages git worktrees for parallel development work.
 Tracks development sessions with documentation and commits.
 
 **Features:**
+
 - Creates dated session logs: `docs/sessions/topic-name/YYYY-MM-DD-title.md`
 - Integrates with TodoWrite for task tracking
 - Auto-detects worktree context
@@ -122,6 +132,7 @@ Tracks development sessions with documentation and commits.
 Creates structured work streams for multi-session development.
 
 **Creates:**
+
 - Work stream document: `docs/work-streams/topic-name.md`
 - Session folder: `docs/sessions/topic-name/`
 - Updates development log (if exists)
@@ -133,6 +144,7 @@ Creates structured work streams for multi-session development.
 Creates Architecture Decision Records with proper structure.
 
 **Template includes:**
+
 - Context & Decision Drivers
 - Options Considered (with pros/cons)
 - Decision & Rationale
@@ -188,6 +200,29 @@ docs/
 
 Skills will create these directories as needed.
 
+## Project Configuration
+
+Most skills read `.claude/project-config.md` in their "Step 0" to discover
+project-specific paths and settings. This file is optional — all skills fall
+back to sensible defaults when it is missing.
+
+### Supported Sections
+
+| Section                   | Purpose                                | Used By                        |
+| ------------------------- | -------------------------------------- | ------------------------------ |
+| **Documentation Paths**   | Override default `docs/` paths         | All documentation-aware skills |
+| **Quality Checks**        | Format/Build/Lint/Test commands        | session-end                    |
+| **Insight Tags**          | Project-specific insight categories    | insight-capture                |
+| **Implementation Review** | Strictness level (strict/medium/loose) | review-implementation          |
+
+### Getting Started
+
+- Run `/init-project` to generate a tailored config interactively
+- Or copy `examples/project-config.md` from this repo and edit it manually
+
+See [`examples/project-config.md`](examples/project-config.md) for a fully
+annotated template with explanations of each section.
+
 ## Customization
 
 Each skill can be customized for your project:
@@ -202,6 +237,7 @@ Each skill can be customized for your project:
 ## Contributing
 
 When adding new skills:
+
 1. Create skill folder with `SKILL.md`
 2. Include clear documentation with examples
 3. Test thoroughly
