@@ -131,7 +131,21 @@ Would you like to:
 
 If adding or replacing, ask user for their tags.
 
-### Step 5: Configure Review Strictness
+### Step 5: Configure Co-Author
+
+```
+Co-Authored-By trailer in git commits (/git-commit):
+
+  auto   — Agent identifies itself automatically (e.g., Claude, Copilot)
+  none   — No Co-Authored-By trailer
+  custom — Provide a fixed "Name <email>" value
+
+Which co-author mode?
+```
+
+If user picks "custom", ask for the `Name <email>` value.
+
+### Step 6: Configure Review Strictness
 
 ```
 Implementation review strictness (/review-implementation):
@@ -143,7 +157,7 @@ Implementation review strictness (/review-implementation):
 Which strictness level?
 ```
 
-### Step 6: Write Config File
+### Step 7: Write Config File
 
 1. Ensure `.claude/` directory exists (`mkdir -p .claude`)
 2. Write `.claude/project-config.md` with all configured values
@@ -198,13 +212,17 @@ Commands to run before completing a session:
 ## Implementation Review
 
 Strictness: [strict/medium/loose]
+
+## Co-Author
+
+Co-Author: [auto/none/Name <email>]
 ```
 
 **Important:**
 - Omit subsections where the user left the command blank (e.g., if no format command, omit the Format subsection entirely)
 - Do not include placeholder text like `[YOUR_COMMAND]` — either include a real command or omit the subsection
 
-### Step 7: Offer to Create Docs Directory Structure
+### Step 8: Offer to Create Docs Directory Structure
 
 ```
 Would you like to create the documentation directory structure now?
@@ -219,7 +237,7 @@ Options:
 
 If yes, run `mkdir -p` for each configured path's parent directory.
 
-### Step 8: Summary
+### Step 9: Summary
 
 Display a summary of what was created:
 
@@ -239,12 +257,13 @@ Created: .claude/project-config.md
 
   Insight Tags: [tag1, tag2, ...]
   Review Strictness: [level]
+  Co-Author: [auto/none/custom value]
 
-  [Directories created: list (if Step 7 was yes)]
+  [Directories created: list (if Step 8 was yes)]
 
 Skills that use this config: session-start, session-end, session-list,
 work-stream-start, worktree-start, dev-log-rotate, adr-create,
-discovery-start, insight-capture, review-implementation
+discovery-start, insight-capture, review-implementation, git-commit
 
 See examples/project-config.md in the claude-skills repo for a fully
 annotated reference.

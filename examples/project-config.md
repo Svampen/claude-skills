@@ -95,3 +95,16 @@ Run `/init-project` to generate this file interactively.
 <!--   loose  — all findings are informational                         -->
 
 Strictness: strict
+
+---
+
+## Co-Author
+
+<!-- Controls the Co-Authored-By trailer in git commits.              -->
+<!-- Used by: git-commit                                               -->
+<!-- Options:                                                          -->
+<!--   auto (default) — agent identifies itself (Claude, Copilot, etc) -->
+<!--   none — no Co-Authored-By trailer                                -->
+<!--   Name <email> — fixed custom value                               -->
+
+Co-Author: auto

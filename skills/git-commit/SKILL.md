@@ -1,7 +1,7 @@
 ---
 name: git-commit
 description: Creates git commits using Conventional Commits format. Use when committing changes to ensure consistent, meaningful commit messages.
-allowed-tools: Bash, AskUserQuestion
+allowed-tools: Bash, Read, AskUserQuestion
 user-invocable: true
 ---
 
@@ -67,6 +67,20 @@ refactor(auth)!: rename login endpoint
 Or add a BREAKING CHANGE line in the footer.
 
 ## Instructions
+
+### Step 0: Read Project Config
+
+Read `.claude/project-config.md` if it exists and look for the `## Co-Author` section.
+
+**Parse the co-author setting:**
+
+| Config value | Behavior |
+|---|---|
+| `auto` or section missing | Agent self-identifies: use your own name and an appropriate no-reply email (e.g., `Claude <noreply@anthropic.com>`, `GitHub Copilot <noreply@github.com>`) |
+| `none` | Do not add a `Co-Authored-By` trailer |
+| `Name <email>` | Use the provided value verbatim |
+
+Keep the resolved co-author value (or absence) for use in Step 7.
 
 ### Step 1: Check Repository Status
 
@@ -181,20 +195,29 @@ Do NOT describe HOW the code works — that belongs in the code itself.
 
 **Before committing, verify the first line is ≤ 80 characters.** If over 80, shorten the description and move detail to the body.
 
-Build the commit message:
+Build the commit message using the co-author setting resolved in Step 0:
 
+**If co-author is enabled (`auto` or custom value):**
 ```bash
 git commit -m "$(cat <<'EOF'
 <type>[scope]: <description>
 
 [body if needed]
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: <resolved co-author>
 EOF
 )"
 ```
 
-**Always include the Co-Authored-By trailer.**
+**If co-author is `none`:**
+```bash
+git commit -m "$(cat <<'EOF'
+<type>[scope]: <description>
+
+[body if needed]
+EOF
+)"
+```
 
 ### Step 8: Verify Commit
 
@@ -228,7 +251,7 @@ feat(auth): add authentication middleware
 
 Implement JWT-based authentication for API endpoints.
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: <agent-name> <agent-email>
 ```
 
 ### Example 2: Bug Fix
@@ -238,7 +261,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 fix(auth): correct login redirect URL
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: <agent-name> <agent-email>
 ```
 
 ### Example 3: Documentation
@@ -248,7 +271,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 docs: update installation instructions
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: <agent-name> <agent-email>
 ```
 
 ### Example 4: Refactor with Scope
@@ -261,7 +284,7 @@ refactor(utils): extract validation to separate module
 Improve code organization by separating validation logic.
 No functional changes.
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: <agent-name> <agent-email>
 ```
 
 ### Example 5: Breaking Change
@@ -274,7 +297,7 @@ feat(api)!: rename /users endpoint to /accounts
 BREAKING CHANGE: /users endpoint removed. Use /accounts instead.
 Migration: Update all API calls from /users to /accounts.
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: <agent-name> <agent-email>
 ```
 
 ### Example 6: Chore
@@ -284,7 +307,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 chore(deps): update dependencies to latest versions
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: <agent-name> <agent-email>
 ```
 
 ---
@@ -306,7 +329,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## Notes
 
-- Always include Co-Authored-By trailer for Claude contributions
+- Co-Authored-By trailer is controlled by `project-config.md` (`auto` by default, can be `none` or a custom value)
+- In `auto` mode, identify yourself — use your agent name and a suitable no-reply email
 - Use HEREDOC syntax for multi-line commit messages
 - Verify commit succeeded before reporting success
 - Don't amend commits unless explicitly asked
