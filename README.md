@@ -89,7 +89,7 @@ Creates commits following [Conventional Commits](https://www.conventionalcommits
 - Auto-detects commit type (feat, fix, docs, etc.)
 - Suggests scope based on changed files
 - Generates concise descriptions
-- Always includes Co-Authored-By trailer
+- Configurable Co-Authored-By trailer (auto-detects agent identity, or disable via project config)
 
 **Usage:** Just say "commit" or "/commit" when you have changes ready.
 
